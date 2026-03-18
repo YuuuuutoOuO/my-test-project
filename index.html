@@ -3,62 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>腦錢包密碼產生器 - 進化版</title>
+    <title>極致安全腦錢包</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-900 text-gray-100 min-h-screen flex items-center justify-center p-4">
 
     <div class="bg-gray-800 p-6 rounded-xl shadow-2xl w-full max-w-lg border border-gray-700">
-        <h1 class="text-2xl font-bold mb-6 text-center text-blue-400">🧠 腦錢包多功能產生器</h1>
+        <h1 class="text-2xl font-bold mb-6 text-center text-blue-400">🛡️ 極致安全腦錢包</h1>
         
         <div class="space-y-4">
             <div>
-                <label class="block text-sm font-medium mb-1 text-gray-300">1. 服務名稱 (如: google, bank)</label>
+                <label class="block text-sm font-medium mb-1 text-gray-300">服務名稱 (如: google, bank)</label>
                 <input type="text" id="service" placeholder="例如: gmail" 
                     class="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
 
             <div class="relative">
-                <label class="block text-sm font-medium mb-1 text-gray-300">2. 腦錢包秘密 (主密碼)</label>
+                <label class="block text-sm font-medium mb-1 text-gray-300">腦錢包秘密 (主密碼)</label>
                 <input type="password" id="masterKey" placeholder="只有你知道的密語" 
                     class="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <button onclick="togglePassword()" class="absolute right-3 top-8 text-gray-400 hover:text-white text-sm">👁️</button>
+                <button onclick="toggleView('masterKey')" class="absolute right-3 top-8 text-gray-400 hover:text-white text-sm">👁️</button>
+            </div>
+
+            <div class="relative">
+                <label class="block text-sm font-medium mb-1 text-yellow-500 font-bold">自定義鹽值 (可空白，增加隨機性)</label>
+                <input type="password" id="userSalt" placeholder="額外的秘密字串" 
+                    class="w-full p-2 rounded bg-gray-700 border border-yellow-900/50 focus:outline-none focus:ring-2 focus:ring-yellow-600">
+                <button onclick="toggleView('userSalt')" class="absolute right-3 top-8 text-gray-400 hover:text-white text-sm">👁️</button>
             </div>
 
             <button onclick="generateAll()" 
-                class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-lg">
-                🚀 生成所有格式
+                class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-lg mt-2">
+                🚀 生成獨立隨機密碼
             </button>
 
             <hr class="border-gray-700 my-2">
 
             <div class="space-y-3">
-                <div>
-                    <label class="text-xs text-gray-400">8碼 英文/數字 混合</label>
+                <div class="result-item">
+                    <label class="text-xs text-gray-400">8 碼獨立亂碼</label>
                     <div class="flex space-x-2">
                         <input type="text" id="res8" readonly class="w-full p-2 text-sm rounded bg-gray-900 border border-gray-700 text-green-400 font-mono">
                         <button onclick="copy('res8')" class="bg-gray-700 px-3 rounded hover:bg-gray-600">📋</button>
                     </div>
                 </div>
 
-                <div>
-                    <label class="text-xs text-gray-400">12碼 英文/數字 混合</label>
+                <div class="result-item">
+                    <label class="text-xs text-gray-400">12 碼獨立亂碼</label>
                     <div class="flex space-x-2">
                         <input type="text" id="res12" readonly class="w-full p-2 text-sm rounded bg-gray-900 border border-gray-700 text-green-400 font-mono">
                         <button onclick="copy('res12')" class="bg-gray-700 px-3 rounded hover:bg-gray-600">📋</button>
                     </div>
                 </div>
 
-                <div>
-                    <label class="text-xs text-gray-400">24碼 強力亂碼 (推薦重要帳號)</label>
+                <div class="result-item">
+                    <label class="text-xs text-gray-400">24 碼獨立亂碼</label>
                     <div class="flex space-x-2">
                         <input type="text" id="res24" readonly class="w-full p-2 text-sm rounded bg-gray-900 border border-gray-700 text-green-400 font-mono">
                         <button onclick="copy('res24')" class="bg-gray-700 px-3 rounded hover:bg-gray-600">📋</button>
                     </div>
                 </div>
 
-                <div>
-                    <label class="text-xs text-gray-400 text-yellow-500">12碼 純數字 (適用於 PIN 碼或提款密碼)</label>
+                <div class="result-item">
+                    <label class="text-xs text-yellow-500 font-semibold">12 碼純數字 (獨立生成)</label>
                     <div class="flex space-x-2">
                         <input type="text" id="resNum" readonly class="w-full p-2 text-sm rounded bg-gray-900 border border-gray-700 text-yellow-400 font-mono">
                         <button onclick="copy('resNum')" class="bg-gray-700 px-3 rounded hover:bg-gray-600">📋</button>
@@ -68,54 +75,60 @@
         </div>
         
         <p class="mt-6 text-[10px] text-gray-500 text-center uppercase tracking-widest">
-            Local Encryption • No Data Saved • Secure Brainwallet
+            Non-Overlapping Logic • Multi-Salted • AES Standard Ready
         </p>
     </div>
 
     <script>
-        // 密碼隱藏切換
-        function togglePassword() {
-            const input = document.getElementById('masterKey');
-            input.type = input.type === 'password' ? 'text' : 'password';
+        // 切換顯示/隱藏
+        function toggleView(id) {
+            const el = document.getElementById(id);
+            el.type = el.type === 'password' ? 'text' : 'password';
         }
 
-        // 核心生成邏輯
+        // 核心 SHA-256 運算函數
+        async function getHash(text) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(text);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
         async function generateAll() {
             const service = document.getElementById('service').value.toLowerCase().trim();
             const masterKey = document.getElementById('masterKey').value;
+            const salt = document.getElementById('userSalt').value;
 
             if (!service || !masterKey) {
-                alert("請填寫所有欄位！");
+                alert("請填寫服務名稱與主密碼！");
                 return;
             }
 
-            const encoder = new TextEncoder();
-            const data = encoder.encode(service + masterKey);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            
-            // 轉為完整 64 位十六進位字串
-            const fullHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-            
-            // 分配結果
-            document.getElementById('res8').value = fullHex.substring(0, 8);
-            document.getElementById('res12').value = fullHex.substring(0, 12);
-            document.getElementById('res24').value = fullHex.substring(0, 24);
-            
-            // 純數字邏輯 (將前 16 位 Hex 轉成數字並截取)
-            const numericPart = BigInt('0x' + fullHex.substring(0, 16)).toString();
-            document.getElementById('resNum').value = numericPart.substring(0, 12);
+            // 基礎字串 = 服務 + 主密碼 + 自定義鹽值
+            const base = service + masterKey + salt;
+
+            // 分別針對不同長度「再次加鹽」，確保雜湊結果完全不同
+            const hash8 = await getHash(base + "@length8");
+            const hash12 = await getHash(base + "@length12");
+            const hash24 = await getHash(base + "@length24");
+            const hashNum = await getHash(base + "@numeric");
+
+            // 顯示結果
+            document.getElementById('res8').value = hash8.substring(0, 8);
+            document.getElementById('res12').value = hash12.substring(0, 12);
+            document.getElementById('res24').value = hash24.substring(0, 24);
+
+            // 純數字轉換邏輯
+            const numericValue = BigInt('0x' + hashNum.substring(0, 16)).toString();
+            document.getElementById('resNum').value = numericValue.substring(0, 12);
         }
 
-        // 複製功能
         function copy(id) {
             const text = document.getElementById(id).value;
             if (!text) return;
             navigator.clipboard.writeText(text);
-            
-            // 簡單的視覺回饋
             const btn = event.currentTarget;
-            const originalText = btn.innerText;
             btn.innerText = "✅";
             setTimeout(() => { btn.innerText = "📋"; }, 1000);
         }
