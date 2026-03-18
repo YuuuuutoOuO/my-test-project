@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>數位腦錢包</title>
+    <title>🛡️ 數位領域：全功能腦錢包</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="manifest" href="manifest.json">
     <style>
@@ -17,143 +17,120 @@
         }
     </script>
 </head>
-<body class="bg-gray-950 text-gray-100 min-h-screen flex items-center justify-center p-4 font-sans">
+<body class="bg-gray-900 text-gray-100 min-h-screen flex items-center justify-center p-4 font-sans">
 
     <div class="bg-gray-900/80 p-6 rounded-3xl shadow-[0_0_50px_rgba(59,130,246,0.2)] w-full max-w-lg border border-blue-900/30 backdrop-blur-md">
-        <h1 class="text-3xl font-black mb-6 text-center bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">🛡️ BRAINWALLET V5</h1>
+        <h1 class="text-3xl font-black mb-6 text-center bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent italic">BRAINWALLET V6</h1>
         
-        <div class="space-y-5">
+        <div class="space-y-4">
             <div class="space-y-4 bg-gray-800/50 p-4 rounded-2xl border border-gray-700">
                 <div>
-                    <label class="block text-xs font-bold uppercase tracking-widest mb-1 text-blue-400">Target / 服務名稱</label>
+                    <label class="block text-[10px] font-bold uppercase tracking-widest mb-1 text-blue-400">Target / 服務名稱</label>
                     <input type="text" id="service" placeholder="例如: Binance, Google" autocomplete="off"
-                        class="w-full p-2.5 rounded-xl bg-gray-900 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 text-white transition-all">
+                        class="w-full p-2.5 rounded-xl bg-gray-900 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 text-white transition-all text-sm">
                 </div>
 
                 <div class="relative">
-                    <label class="block text-xs font-bold uppercase tracking-widest mb-1 text-blue-400">Master Key / 腦秘密 (支援注音 🧠)</label>
+                    <label class="block text-[10px] font-bold uppercase tracking-widest mb-1 text-blue-400">Master Key / 腦秘密 (支援注音 🧠)</label>
                     <input type="text" id="masterKey" name="my-brain-key" placeholder="點擊即可輸入中文/注音" 
                         autocomplete="off" spellcheck="false" onfocus="autoShow(this)" onblur="autoHide(this)"
-                        class="password-mask w-full p-2.5 rounded-xl bg-gray-900 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 text-white transition-all">
+                        class="password-mask w-full p-2.5 rounded-xl bg-gray-900 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 text-white transition-all text-sm">
                     <button onclick="toggleView('masterKey')" class="absolute right-3 top-9 text-gray-500 hover:text-blue-400 p-1">👁️</button>
                 </div>
 
                 <div class="relative">
-                    <label class="block text-xs font-bold uppercase tracking-widest mb-1 text-yellow-500">Salt / 自定義鹽值 (加點料)</label>
-                    <input type="text" id="userSalt" name="my-salt-val" placeholder="例如: ㄆㄨˇㄙㄚˋ10-編號" 
+                    <label class="block text-[10px] font-bold uppercase tracking-widest mb-1 text-yellow-500">Salt / 自定義鹽值 (加點料)</label>
+                    <input type="text" id="userSalt" name="my-salt-val" placeholder="例如: PSA10-編號" 
                         autocomplete="off" spellcheck="false" onfocus="autoShow(this)" onblur="autoHide(this)"
-                        class="password-mask w-full p-2.5 rounded-xl bg-gray-900 border border-yellow-900/30 focus:outline-none focus:ring-2 focus:ring-yellow-600 text-white transition-all">
+                        class="password-mask w-full p-2.5 rounded-xl bg-gray-900 border border-yellow-900/30 focus:outline-none focus:ring-2 focus:ring-yellow-600 text-white transition-all text-sm">
                     <button onclick="toggleView('userSalt')" class="absolute right-3 top-9 text-gray-500 hover:text-yellow-500 p-1">👁️</button>
                 </div>
             </div>
 
             <button onclick="generateAll()" 
-                class="w-full bg-blue-600 hover:bg-blue-500 text-white font-black py-4 rounded-2xl transition duration-300 shadow-[0_0_20px_rgba(37,99,235,0.4)] active:scale-95 text-lg">
+                class="w-full bg-blue-600 hover:bg-blue-500 text-white font-black py-3.5 rounded-2xl transition duration-300 shadow-[0_0_20px_rgba(37,99,235,0.4)] active:scale-95 text-lg">
                 RUN ENCRYPTION 🚀
             </button>
 
-            <div id="strengthContainer" class="hidden space-y-2 px-1">
+            <div id="strengthContainer" class="hidden space-y-1.5 px-1">
                 <div class="flex justify-between items-end">
-                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Security Strength / 強度分析</span>
-                    <span id="strengthText" class="text-xs font-black text-blue-400 italic">--</span>
+                    <span class="text-[9px] font-bold text-gray-500 uppercase tracking-tighter">Security Strength / 強度分析</span>
+                    <span id="strengthText" class="text-[10px] font-black text-blue-400 italic">--</span>
                 </div>
-                <div class="w-full bg-gray-800 rounded-full h-1.5 overflow-hidden">
+                <div class="w-full bg-gray-800 rounded-full h-1 overflow-hidden">
                     <div id="strengthBar" class="strength-bar h-full w-0 bg-blue-500"></div>
                 </div>
             </div>
 
-            <div class="space-y-3 pt-2">
-                <div class="group">
-                    <div class="flex justify-between items-center mb-1 px-1">
-                        <label class="text-[10px] font-bold text-gray-500 uppercase">12-Char Alpha (英數混合)</label>
-                    </div>
-                    <div class="flex space-x-2">
-                        <input type="text" id="resAlpha" readonly class="w-full p-2.5 text-sm rounded-xl bg-gray-800 border border-gray-700 text-blue-300 font-mono tracking-widest">
-                        <button id="btnToggleResAlpha" onclick="toggleResultView('resAlpha', 'btnToggleResAlpha')" class="p-2.5 rounded-xl bg-gray-700 hover:bg-gray-600 text-gray-300 transition-colors">👁️</button>
-                        <button onclick="copy('resAlpha')" class="p-2.5 rounded-xl bg-gray-700 hover:bg-blue-600 text-gray-300 transition-colors">📋</button>
+            <div class="space-y-2.5 pt-1">
+                <div class="result-group">
+                    <label class="text-[9px] font-bold text-gray-500 uppercase px-1">8-Char Alpha (一般英數)</label>
+                    <div class="flex space-x-1.5 mt-0.5">
+                        <input type="text" id="res8Alpha" readonly class="w-full p-2 text-sm rounded-xl bg-gray-800 border border-gray-700 text-blue-300 font-mono">
+                        <button id="btn8" onclick="toggleResultView('res8Alpha', 'btn8')" class="px-2.5 rounded-xl bg-gray-700 hover:bg-gray-600 text-xs">👁️</button>
+                        <button onclick="copy('res8Alpha')" class="px-2.5 rounded-xl bg-gray-700 hover:bg-blue-600 text-xs">📋</button>
                     </div>
                 </div>
 
-                <div class="group">
-                    <div class="flex justify-between items-center mb-1 px-1">
-                        <label class="text-[10px] font-bold text-gray-500 uppercase">24-Char Full (最強推薦 🔥)</label>
+                <div class="result-group">
+                    <label class="text-[9px] font-bold text-blue-400 uppercase px-1">12-Char Alpha (僅限大小寫+數字)</label>
+                    <div class="flex space-x-1.5 mt-0.5">
+                        <input type="text" id="res12Alpha" readonly class="w-full p-2 text-sm rounded-xl bg-gray-800 border border-gray-700 text-blue-400 font-mono">
+                        <button id="btn12A" onclick="toggleResultView('res12Alpha', 'btn12A')" class="px-2.5 rounded-xl bg-gray-700 hover:bg-gray-600 text-xs">👁️</button>
+                        <button onclick="copy('res12Alpha')" class="px-2.5 rounded-xl bg-gray-700 hover:bg-blue-600 text-xs">📋</button>
                     </div>
-                    <div class="flex space-x-2">
-                        <input type="text" id="resFull24" readonly class="w-full p-2.5 text-sm rounded-xl bg-gray-800 border border-gray-700 text-emerald-400 font-mono tracking-widest">
-                        <button id="btnToggleResFull24" onclick="toggleResultView('resFull24', 'btnToggleResFull24')" class="p-2.5 rounded-xl bg-gray-700 hover:bg-gray-600 text-gray-300 transition-colors">👁️</button>
-                        <button onclick="copy('resFull24')" class="p-2.5 rounded-xl bg-gray-700 hover:bg-blue-600 text-gray-300 transition-colors">📋</button>
+                </div>
+
+                <div class="result-group">
+                    <label class="text-[9px] font-bold text-gray-500 uppercase px-1">12-Char Full (含符號)</label>
+                    <div class="flex space-x-1.5 mt-0.5">
+                        <input type="text" id="res12Full" readonly class="w-full p-2 text-sm rounded-xl bg-gray-800 border border-gray-700 text-emerald-400 font-mono">
+                        <button id="btn12F" onclick="toggleResultView('res12Full', 'btn12F')" class="px-2.5 rounded-xl bg-gray-700 hover:bg-gray-600 text-xs">👁️</button>
+                        <button onclick="copy('res12Full')" class="px-2.5 rounded-xl bg-gray-700 hover:bg-blue-600 text-xs">📋</button>
+                    </div>
+                </div>
+
+                <div class="result-group">
+                    <label class="text-[9px] font-bold text-gray-500 uppercase px-1">24-Char Full (最強加密)</label>
+                    <div class="flex space-x-1.5 mt-0.5">
+                        <input type="text" id="res24Full" readonly class="w-full p-2 text-sm rounded-xl bg-gray-800 border border-gray-700 text-emerald-500 font-mono">
+                        <button id="btn24F" onclick="toggleResultView('res24Full', 'btn24F')" class="px-2.5 rounded-xl bg-gray-700 hover:bg-gray-600 text-xs">👁️</button>
+                        <button onclick="copy('res24Full')" class="px-2.5 rounded-xl bg-gray-700 hover:bg-blue-600 text-xs">📋</button>
+                    </div>
+                </div>
+
+                <div class="result-group">
+                    <label class="text-[9px] font-bold text-yellow-600 uppercase px-1">12-Digit Numeric (純數字 PIN)</label>
+                    <div class="flex space-x-1.5 mt-0.5">
+                        <input type="text" id="resNum" readonly class="w-full p-2 text-sm rounded-xl bg-gray-800 border border-gray-700 text-yellow-400 font-mono">
+                        <button id="btnNum" onclick="toggleResultView('resNum', 'btnNum')" class="px-2.5 rounded-xl bg-gray-700 hover:bg-gray-600 text-xs">👁️</button>
+                        <button onclick="copy('resNum')" class="px-2.5 rounded-xl bg-gray-700 hover:bg-blue-600 text-xs">📋</button>
                     </div>
                 </div>
                 
-                <p class="text-[9px] text-gray-600 text-center font-mono pt-2">
-                    ENCRYPTION: SHA-256 | REGION: TW (BOPOMOFO SUPPORT) | STATUS: OFFLINE READY
+                <p class="text-[8px] text-gray-600 text-center font-mono pt-1">
+                    SHA-256 | BOPOMOFO SECURE | ALL LENGTHS RESTORED
                 </p>
             </div>
         </div>
     </div>
 
     <script>
-        let realPasswords = { resAlpha: '', resFull24: '' };
+        let realPasswords = {};
         const charsets = {
             alpha: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
-            full: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:,.<>?"
+            full: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:,.<>?",
+            num: "0123456789"
         };
 
-        // --- 智慧遮蔽與顯示 ---
-        function autoShow(el) {
-            el.classList.replace('password-mask', 'password-none');
-            const btn = el.nextElementSibling;
-            btn.innerHTML = '🙈'; btn.classList.add('text-blue-400');
-        }
-        function autoHide(el) {
-            setTimeout(() => {
-                el.classList.replace('password-none', 'password-mask');
-                const btn = el.nextElementSibling;
-                btn.innerHTML = '👁️'; btn.classList.remove('text-blue-400');
-            }, 250);
-        }
+        // 智慧隱藏邏輯
+        function autoShow(el) { el.classList.replace('password-mask', 'password-none'); }
+        function autoHide(el) { setTimeout(() => { el.classList.replace('password-none', 'password-mask'); }, 250); }
         function toggleView(id) {
             const el = document.getElementById(id);
-            const btn = el.nextElementSibling;
-            if (el.classList.contains('password-mask')) {
-                el.classList.replace('password-mask', 'password-none');
-                btn.innerHTML = '🙈';
-            } else {
-                el.classList.replace('password-none', 'password-mask');
-                btn.innerHTML = '👁️';
-            }
+            el.classList.contains('password-mask') ? el.classList.replace('password-mask', 'password-none') : el.classList.replace('password-none', 'password-mask');
         }
 
-        // --- 強度計算 (Entropy) ---
-        function analyzeStrength(pwd, type) {
-            const length = pwd.length;
-            const poolSize = type === 'alpha' ? 62 : 94;
-            // 熵值公式: L * log2(Pool)
-            const entropy = Math.floor(length * Math.log2(poolSize));
-            
-            const bar = document.getElementById('strengthBar');
-            const text = document.getElementById('strengthText');
-            document.getElementById('strengthContainer').classList.remove('hidden');
-
-            let score = Math.min(entropy / 128 * 100, 100); // 以 128 bit 為滿分參考
-            bar.style.width = score + '%';
-
-            if (entropy < 60) {
-                text.innerText = `WEAK (${entropy} bits)`;
-                bar.className = 'strength-bar h-full bg-red-500';
-            } else if (entropy < 85) {
-                text.innerText = `DECENT (${entropy} bits)`;
-                bar.className = 'strength-bar h-full bg-yellow-500';
-            } else if (entropy < 120) {
-                text.innerText = `STRONG (${entropy} bits)`;
-                bar.className = 'strength-bar h-full bg-emerald-500';
-            } else {
-                text.innerText = `GODLIKE (${entropy} bits) 🛡️`;
-                bar.className = 'strength-bar h-full bg-cyan-400 shadow-[0_0_10px_#22d3ee]';
-            }
-        }
-
-        // --- 核心運算 ---
         async function getComplexPassword(base, salt, charset, length) {
             const encoder = new TextEncoder();
             const data = encoder.encode(base + salt);
@@ -166,32 +143,41 @@
             return result;
         }
 
+        function getMasked(str, s, e) { return str.substring(0, s) + "****" + str.slice(-e); }
+
         async function generateAll() {
-            const service = document.getElementById('service').value.toLowerCase().trim();
-            const masterKey = document.getElementById('masterKey').value;
+            const svc = document.getElementById('service').value.toLowerCase().trim();
+            const key = document.getElementById('masterKey').value;
             const salt = document.getElementById('userSalt').value;
+            if (!svc || !key) return alert("請填寫欄位！");
+            const base = svc + key + salt;
 
-            if (!service || !masterKey) { alert("請填寫所有欄位！"); return; }
+            realPasswords.res8Alpha = await getComplexPassword(base, "@a8", charsets.alpha, 8);
+            realPasswords.res12Alpha = await getComplexPassword(base, "@a12", charsets.alpha, 12);
+            realPasswords.res12Full = await getComplexPassword(base, "@f12", charsets.full, 12);
+            realPasswords.res24Full = await getComplexPassword(base, "@f24", charsets.full, 24);
+            realPasswords.resNum = await getComplexPassword(base, "@n12", charsets.num, 12);
 
-            const base = service + masterKey + salt;
-            realPasswords.resAlpha = await getComplexPassword(base, "@a12", charsets.alpha, 12);
-            realPasswords.resFull24 = await getComplexPassword(base, "@f24", charsets.full, 24);
+            document.getElementById('res8Alpha').value = getMasked(realPasswords.res8Alpha, 2, 2);
+            document.getElementById('res12Alpha').value = getMasked(realPasswords.res12Alpha, 3, 3);
+            document.getElementById('res12Full').value = getMasked(realPasswords.res12Full, 3, 3);
+            document.getElementById('res24Full').value = getMasked(realPasswords.res24Full, 4, 4);
+            document.getElementById('resNum').value = getMasked(realPasswords.resNum, 3, 3);
 
-            document.getElementById('resAlpha').value = realPasswords.resAlpha.substring(0,3) + "****" + realPasswords.resAlpha.slice(-3);
-            document.getElementById('resFull24').value = realPasswords.resFull24.substring(0,4) + "****" + realPasswords.resFull24.slice(-4);
-            
-            analyzeStrength(realPasswords.resFull24, 'full');
+            // 強度分析
+            const entropy = Math.floor(24 * Math.log2(94));
+            document.getElementById('strengthContainer').classList.remove('hidden');
+            document.getElementById('strengthBar').style.width = '100%';
+            document.getElementById('strengthText').innerText = `GODLIKE (${entropy} bits) 🛡️`;
         }
 
-        function toggleResultView(inputId, btnId) {
-            const inputEl = document.getElementById(inputId);
-            const pwd = realPasswords[inputId];
-            if (inputEl.value.includes('****')) {
-                inputEl.value = pwd;
+        function toggleResultView(id, btnId) {
+            const el = document.getElementById(id);
+            if (el.value.includes('****')) {
+                el.value = realPasswords[id];
                 document.getElementById(btnId).innerText = "🙈";
             } else {
-                const mask = inputId === 'resAlpha' ? [3,3] : [4,4];
-                inputEl.value = pwd.substring(0, mask[0]) + "****" + pwd.slice(-mask[1]);
+                el.value = getMasked(realPasswords[id], 3, 3);
                 document.getElementById(btnId).innerText = "👁️";
             }
         }
