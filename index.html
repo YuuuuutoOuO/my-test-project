@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>極致安全腦錢包 (中文支援版)</title>
+    <title>極致安全腦錢包 (智慧輸入版)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="manifest" href="manifest.json">
     <script>
@@ -15,7 +15,7 @@
 <body class="bg-gray-900 text-gray-100 min-h-screen flex items-center justify-center p-4 font-sans">
 
     <div class="bg-gray-800 p-6 rounded-2xl shadow-2xl w-full max-w-lg border border-gray-700">
-        <h1 class="text-2xl font-bold mb-6 text-center text-blue-400">🛡️ 中文強化 腦錢包保險箱</h1>
+        <h1 class="text-2xl font-bold mb-6 text-center text-blue-400">🛡️ 智慧輸入 腦錢包保險箱</h1>
         
         <div class="space-y-4">
             <div>
@@ -26,14 +26,16 @@
 
             <div class="relative">
                 <label class="block text-sm font-medium mb-1 text-gray-300">腦錢包秘密 (支援中文 🧠)</label>
-                <input type="password" id="masterKey" placeholder="輸入你的中文或英文密語" autocomplete="new-password"
+                <input type="password" id="masterKey" placeholder="點擊即可輸入中文" autocomplete="new-password"
+                    onfocus="autoShow(this)" onblur="autoHide(this)"
                     class="w-full p-2.5 rounded-lg bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 text-white placeholder-gray-500">
                 <button onclick="toggleView('masterKey')" class="absolute right-3 top-9 text-gray-400 hover:text-white p-1">👁️</button>
             </div>
 
             <div class="relative">
                 <label class="block text-sm font-medium mb-1 text-yellow-500 font-bold">自定義鹽值 (支援中文，可空白)</label>
-                <input type="password" id="userSalt" placeholder="例如: 2026年我的生日" autocomplete="new-password"
+                <input type="password" id="userSalt" placeholder="點擊即可輸入中文" autocomplete="new-password"
+                    onfocus="autoShow(this)" onblur="autoHide(this)"
                     class="w-full p-2.5 rounded-lg bg-gray-700 border border-yellow-900/50 focus:outline-none focus:ring-2 focus:ring-yellow-600 text-white placeholder-gray-500">
                 <button onclick="toggleView('userSalt')" class="absolute right-3 top-9 text-gray-400 hover:text-white p-1">👁️</button>
             </div>
@@ -65,7 +67,7 @@
                 </div>
 
                 <div class="result-item">
-                    <label class="text-xs text-gray-400">24 碼 (極致強度 / 全字元)</label>
+                    <label class="text-xs text-gray-400">24 碼 (全字元強力密碼)</label>
                     <div class="flex space-x-1.5 items-center">
                         <input type="text" id="resFull24" readonly class="w-full p-2 text-sm rounded-lg bg-gray-900 border border-gray-700 text-green-400 font-mono tracking-wider">
                         <button id="btnToggleResFull24" onclick="toggleResultView('resFull24', 'btnToggleResFull24')" class="p-2 rounded-lg bg-gray-700/50 hover:bg-gray-600 text-gray-300">👁️</button>
@@ -85,7 +87,7 @@
         </div>
         
         <p class="mt-6 text-[10px] text-gray-600 text-center uppercase tracking-widest font-mono">
-            UTF-8 Chinese Supported • Local Encryption • 2026 Security
+            Focus Auto-Reveal • UTF-8 Support • 2026 Security
         </p>
     </div>
 
@@ -99,22 +101,46 @@
             num: "0123456789"
         };
 
-        function toggleView(id) {
-            const el = document.getElementById(id);
-            el.type = el.type === 'password' ? 'text' : 'password';
+        // --- 智慧切換邏輯 ---
+        function autoShow(el) {
+            el.type = 'text';
+            const btn = el.nextElementSibling;
+            btn.innerHTML = '🙈';
+            btn.classList.add('text-blue-400');
         }
 
-        // 核心加密映射邏輯
+        function autoHide(el) {
+            // 延遲一小段時間再隱藏，避免點擊眼睛按鈕時發生衝突
+            setTimeout(() => {
+                el.type = 'password';
+                const btn = el.nextElementSibling;
+                btn.innerHTML = '👁️';
+                btn.classList.remove('text-blue-400');
+            }, 200);
+        }
+
+        function toggleView(id) {
+            const el = document.getElementById(id);
+            const btn = el.nextElementSibling;
+            if (el.type === 'password') {
+                el.type = 'text';
+                btn.innerHTML = '🙈';
+                btn.classList.add('text-blue-400');
+            } else {
+                el.type = 'password';
+                btn.innerHTML = '👁️';
+                btn.classList.remove('text-blue-400');
+            }
+        }
+        // ------------------
+
         async function getComplexPassword(base, salt, charset, length) {
             const encoder = new TextEncoder();
-            // 這裡會將中文轉化為 UTF-8 的 byte 陣列
             const data = encoder.encode(base + salt);
             const hashBuffer = await crypto.subtle.digest('SHA-256', data);
             const hashArray = new Uint8Array(hashBuffer);
-            
             let result = "";
             for (let i = 0; i < length; i++) {
-                // 每個字元由 hash 中的 byte 決定，確保確定性
                 const charIndex = hashArray[i % 32] % charset.length;
                 result += charset.charAt(charIndex);
             }
@@ -138,13 +164,11 @@
 
             const base = service + masterKey + salt;
 
-            // 生成各種格式
             realPasswords.resAlpha = await getComplexPassword(base, "@alpha12", charsets.alpha, 12);
             realPasswords.resFull12 = await getComplexPassword(base, "@full12", charsets.full, 12);
             realPasswords.resFull24 = await getComplexPassword(base, "@full24", charsets.full, 24);
             realPasswords.resNum = await getComplexPassword(base, "@num12", charsets.num, 12);
 
-            // 顯示遮蔽版
             document.getElementById('resAlpha').value = getMaskedString(realPasswords.resAlpha, 3, 3);
             document.getElementById('resFull12').value = getMaskedString(realPasswords.resFull12, 3, 3);
             document.getElementById('resFull24').value = getMaskedString(realPasswords.resFull24, 4, 4);
@@ -157,10 +181,8 @@
             const inputEl = document.getElementById(inputId);
             const btnEl = document.getElementById(btnId);
             if (!realPasswords[inputId]) return;
-
             const config = maskConfig[inputId];
             const masked = getMaskedString(realPasswords[inputId], config[0], config[1]);
-
             if (inputEl.value === masked) {
                 inputEl.value = realPasswords[inputId];
                 btnEl.innerText = "🙈";
