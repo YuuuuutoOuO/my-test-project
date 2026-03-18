@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>腦錢包密碼產生器</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen flex items-center justify-center p-4">
+
+    <div class="bg-gray-800 p-8 rounded-xl shadow-2xl w-full max-w-md border border-gray-700">
+        <h1 class="text-2xl font-bold mb-6 text-center text-blue-400">🧠 腦錢包密碼產生器</h1>
+        
+        <div class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium mb-1">服務名稱 (如: google, bank)</label>
+                <input type="text" id="service" placeholder="例如: gmail" 
+                    class="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium mb-1">腦錢包秘密 (只有你知道)</label>
+                <input type="password" id="masterKey" placeholder="輸入你的腦錢包密語" 
+                    class="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+
+            <div class="pt-2">
+                <button onclick="generate()" 
+                    class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded transition duration-200">
+                    產生密碼
+                </button>
+            </div>
+
+            <hr class="border-gray-700 my-4">
+
+            <div>
+                <label class="block text-sm font-medium mb-1 text-gray-400">生成的結果 (亂碼/純數字)</label>
+                <div class="flex space-x-2">
+                    <input type="text" id="result" readonly 
+                        class="w-full p-2 rounded bg-gray-900 border border-gray-700 text-green-400 font-mono">
+                    <button onclick="copyToClipboard()" class="bg-gray-600 px-3 rounded hover:bg-gray-500">📋</button>
+                </div>
+            </div>
+        </div>
+        
+        <p class="mt-6 text-xs text-gray-500 text-center">
+            * 提示：這是在瀏覽器本地運算的，沒有資料會被傳送到伺服器。
+        </p>
+    </div>
+
+    <script>
+        async function generate() {
+            const service = document.getElementById('service').value.toLowerCase().trim();
+            const masterKey = document.getElementById('masterKey').value;
+
+            if (!service || !masterKey) {
+                alert("請填寫所有欄位！");
+                return;
+            }
+
+            // 1. 將輸入結合成一個字串 (Salt + Input)
+            const encoder = new TextEncoder();
+            const data = encoder.encode(service + masterKey);
+
+            // 2. 使用 SHA-256 進行雜湊
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            
+            // 3. 轉化為不同的格式
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            
+            // 十六進位亂碼 (前 16 位)
+            const hexResult = hashArray.map(b => b.toString(16).padStart(2, '0')).join('').substring(0, 16);
+            
+            // 如果你想要純數字 (將前幾個 Byte 轉成大數字)
+            const numericResult = BigInt('0x' + hexResult).toString().substring(0, 12);
+
+            // 顯示結果 (這裡預設顯示十六進位亂碼，你也可以改成 numericResult)
+            document.getElementById('result').value = hexResult;
+        }
+
+        function copyToClipboard() {
+            const copyText = document.getElementById("result");
+            copyText.select();
+            navigator.clipboard.writeText(copyText.value);
+            alert("已複製到剪貼簿！");
+        }
+    </script>
+</body>
+</html>
