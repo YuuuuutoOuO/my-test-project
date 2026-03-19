@@ -4,8 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🛡️ 數位領域：終極腦錢包</title>
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/elliptic@6.5.4/dist/elliptic.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/ripemd160.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/elliptic/6.5.4/elliptic.min.js"></script>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="manifest" href="manifest.json">
     <style>
@@ -152,6 +155,7 @@
             num: "0123456789"
         };
 
+        // --- 模式切換 ---
         function switchMode(mode) {
             currentMode = mode;
             document.getElementById('tabPass').className = (mode === 'pass' ? 'tab-active' : 'tab-inactive') + ' px-4 py-2 rounded-xl text-xs font-black uppercase transition-all';
@@ -161,6 +165,7 @@
             document.getElementById('mainTitle').innerText = mode === 'pass' ? 'BRAINWALLET' : 'BITCOIN WALLET';
         }
 
+        // --- 智慧切換邏輯 ---
         function autoShow(el) {
             el.style.webkitTextSecurity = 'none';
             const btn = el.nextElementSibling;
@@ -187,14 +192,14 @@
             }
         }
 
-        // 輔助工具：將 Uint8Array 安全地轉為 Hex 字串，防止 CryptoJS 解析失敗
+        // --- 工具：轉 Hex ---
         function toHexString(byteArray) {
             return Array.from(byteArray, function(byte) {
                 return ('0' + (byte & 0xFF).toString(16)).slice(-2);
             }).join('');
         }
 
-        // 重新撰寫防呆版的 Base58Check
+        // --- BTC Address 編碼 ---
         function base58Check(payloadArray) {
             const payloadHex = toHexString(payloadArray);
             const wa = CryptoJS.enc.Hex.parse(payloadHex);
@@ -224,12 +229,13 @@
             return res;
         }
 
+        // --- 核心執行 ---
         async function executeAction() {
             try {
                 const svc = document.getElementById('service').value.toLowerCase().trim();
                 const key = document.getElementById('masterKey').value;
                 const salt = document.getElementById('userSalt').value;
-                if (!svc || !key) return alert("請填寫欄位！");
+                if (!svc || !key) return alert("請填寫必要欄位！");
                 
                 const base = svc + key + salt;
                 const encoder = new TextEncoder();
@@ -256,33 +262,33 @@
                     document.getElementById('strengthBar').style.width = '100%';
                     document.getElementById('strengthText').innerText = 'GODLIKE 🛡️';
                 } else {
-                    // 比特幣模式 (已加上防呆轉換)
+                    // 比特幣模式
                     const seed = await crypto.subtle.digest('SHA-256', encoder.encode(base + "@btc-wallet"));
                     const privBytes = new Uint8Array(seed);
                     const privHex = toHexString(privBytes);
                     
-                    // 1. Private Key (WIF)
+                    // 1. 生成 Private Key (WIF 格式)
                     const wifData = new Uint8Array([0x80, ...privBytes, 0x01]);
                     realPasswords.btcPriv = base58Check(wifData);
                     
-                    // 2. Public Key
+                    // 2. 透過 Elliptic 套件生成 Public Key (壓縮格式)
                     const ec = new elliptic.ec('secp256k1');
                     const keyPair = ec.keyFromPrivate(privHex);
-                    const pubHex = keyPair.getPublic(true, 'hex'); // Compressed
+                    const pubHex = keyPair.getPublic(true, 'hex');
                     realPasswords.btcPub = pubHex;
                     
-                    // 3. BTC Address
+                    // 3. 透過 CryptoJS (SHA256 + RIPEMD160) 生成 BTC 舊版地址
                     const sha256Pub = CryptoJS.SHA256(CryptoJS.enc.Hex.parse(pubHex));
                     const ripemd160Hex = CryptoJS.RIPEMD160(sha256Pub).toString(CryptoJS.enc.Hex);
                     
-                    // 手動將 Hex 組裝回 Uint8Array
-                    const addrDataArray = [0x00];
+                    const addrDataArray = [0x00]; // 0x00 代表主網 (Mainnet)
                     for (let i = 0; i < ripemd160Hex.length; i += 2) {
                         addrDataArray.push(parseInt(ripemd160Hex.substring(i, i + 2), 16));
                     }
                     const addrData = new Uint8Array(addrDataArray);
                     realPasswords.btcAddr = base58Check(addrData);
 
+                    // 輸出到畫面
                     ['btcPriv', 'btcPub', 'btcAddr'].forEach(id => {
                         const mask = id === 'btcPub' ? [6,6] : [4,4];
                         document.getElementById(id).value = realPasswords[id].substring(0,mask[0]) + "****" + realPasswords[id].slice(-mask[1]);
@@ -290,10 +296,11 @@
                 }
             } catch (e) {
                 console.error(e);
-                alert("運算發生錯誤！請按 F12 檢查控制台，或確保網路連線正常。");
+                alert("運算發生錯誤！請確保您在有網路的環境下執行，以便載入加密組件。");
             }
         }
 
+        // --- 顯示結果遮蔽 ---
         function toggleResultView(id, btnId) {
             const el = document.getElementById(id);
             if (el.value.includes('****')) {
@@ -306,6 +313,7 @@
             }
         }
 
+        // --- 複製功能 ---
         function copy(id) {
             navigator.clipboard.writeText(realPasswords[id]);
             const btn = event.currentTarget;
