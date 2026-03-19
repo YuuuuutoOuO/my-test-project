@@ -1,8 +1,12 @@
-const CACHE_NAME = 'brainwallet-v4';
+const CACHE_NAME = 'brainwallet-v11'; // 升級版本號強制更新
 const ASSETS = [
-  'index.html',
-  'manifest.json',
-  'https://cdn.tailwindcss.com'
+  './',
+  './index.html',
+  './manifest.json',
+  './crypto-js.min.js',
+  './ripemd160.min.js',
+  './elliptic.min.js',
+  'https://cdn.tailwindcss.com' // UI 樣式庫
 ];
 
 self.addEventListener('install', (e) => {
