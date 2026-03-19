@@ -3,14 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🛡️ 數位領域：雙模組保險箱</title>
+    <title>數位腦錢包</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/elliptic@6.5.4/dist/elliptic.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="manifest" href="manifest.json">
     <style>
-        .password-mask { -webkit-text-security: disc; }
-        .password-none { -webkit-text-security: none; }
         .strength-bar { transition: width 0.5s ease-in-out, background-color 0.5s; }
         .tab-active { background-color: #2563eb; color: white; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3); }
         .tab-inactive { background-color: #1f2937; color: #9ca3af; }
@@ -29,7 +27,7 @@
     </div>
 
     <div class="bg-gray-900/80 p-6 rounded-3xl shadow-[0_0_50px_rgba(59,130,246,0.1)] w-full max-w-lg border border-blue-900/20 backdrop-blur-md">
-        <h1 id="mainTitle" class="text-3xl font-black mb-6 text-center bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent italic tracking-tighter">BRAINWALLET</h1>
+        <h1 id="mainTitle" class="text-2xl font-black mb-6 text-center bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent italic tracking-tighter">BRAINWALLET</h1>
         
         <div class="space-y-4">
             <div class="space-y-4 bg-gray-800/40 p-4 rounded-2xl border border-gray-800">
@@ -39,20 +37,26 @@
                         class="w-full p-2.5 rounded-xl bg-gray-950 border border-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 text-white text-sm">
                 </div>
 
-                <div class="relative">
+                <div>
                     <label class="block text-[10px] font-bold uppercase tracking-widest mb-1 text-blue-400">Master Key / 腦秘密 (支援注音)</label>
-                    <input type="text" id="masterKey" name="my-brain-key" placeholder="支援中文/注音輸入" 
-                        autocomplete="off" spellcheck="false" onfocus="autoShow(this)" onblur="autoHide(this)"
-                        class="password-mask w-full p-2.5 rounded-xl bg-gray-950 border border-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 text-white text-sm">
-                    <button onclick="toggleView('masterKey')" class="absolute right-3 top-9 text-gray-600 hover:text-blue-400 p-1">👁️</button>
+                    <div class="relative">
+                        <input type="text" id="masterKey" name="my-brain-key" placeholder="點擊即可輸入明碼" 
+                            autocomplete="off" spellcheck="false" onfocus="autoShow(this)" onblur="autoHide(this)"
+                            style="-webkit-text-security: disc;"
+                            class="w-full p-2.5 pr-10 rounded-xl bg-gray-950 border border-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 text-white text-sm transition-all">
+                        <button onclick="toggleView('masterKey')" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-blue-400 p-1 transition-colors">👁️</button>
+                    </div>
                 </div>
 
-                <div class="relative">
+                <div>
                     <label class="block text-[10px] font-bold uppercase tracking-widest mb-1 text-yellow-500">Salt / 自定義鹽值</label>
-                    <input type="text" id="userSalt" name="my-salt-val" placeholder="例如: 興趣/喜好" 
-                        autocomplete="off" spellcheck="false" onfocus="autoShow(this)" onblur="autoHide(this)"
-                        class="password-mask w-full p-2.5 rounded-xl bg-gray-950 border border-yellow-900/20 focus:outline-none focus:ring-2 focus:ring-yellow-600 text-white text-sm">
-                    <button onclick="toggleView('userSalt')" class="absolute right-3 top-9 text-gray-600 hover:text-yellow-500 p-1">👁️</button>
+                    <div class="relative">
+                        <input type="text" id="userSalt" name="my-salt-val" placeholder="加點料..." 
+                            autocomplete="off" spellcheck="false" onfocus="autoShow(this)" onblur="autoHide(this)"
+                            style="-webkit-text-security: disc;"
+                            class="w-full p-2.5 pr-10 rounded-xl bg-gray-950 border border-yellow-900/20 focus:outline-none focus:ring-2 focus:ring-yellow-600 text-white text-sm transition-all">
+                        <button onclick="toggleView('userSalt')" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-yellow-500 p-1 transition-colors">👁️</button>
+                    </div>
                 </div>
             </div>
 
@@ -62,9 +66,9 @@
             </button>
 
             <div id="modePass" class="space-y-3">
-                <div id="strengthContainer" class="hidden space-y-1.5 px-1">
+                <div id="strengthContainer" class="hidden space-y-1.5 px-1 pb-1">
                     <div class="flex justify-between items-end">
-                        <span class="text-[9px] font-bold text-gray-500 uppercase tracking-tighter">Security Strength</span>
+                        <span class="text-[9px] font-bold text-gray-500 uppercase">Security Strength</span>
                         <span id="strengthText" class="text-[10px] font-black text-blue-400 italic">--</span>
                     </div>
                     <div class="w-full bg-gray-800 rounded-full h-1 overflow-hidden">
@@ -72,26 +76,38 @@
                     </div>
                 </div>
 
-                <div class="result-group space-y-2">
-                    <div class="flex space-x-1.5">
-                        <input type="text" id="res8Alpha" readonly placeholder="8-Char Alpha" class="w-full p-2.5 text-xs rounded-xl bg-gray-950 border border-gray-800 text-blue-300 font-mono">
-                        <button id="btn8" onclick="toggleResultView('res8Alpha', 'btn8')" class="px-3 rounded-xl bg-gray-800 hover:bg-gray-700">👁️</button>
-                        <button onclick="copy('res8Alpha')" class="px-3 rounded-xl bg-gray-800 hover:bg-blue-600">📋</button>
+                <div class="space-y-2.5">
+                    <div>
+                        <label class="text-[9px] font-bold text-gray-500 uppercase px-1">8-Char Alpha (一般英數)</label>
+                        <div class="flex space-x-1.5">
+                            <input type="text" id="res8Alpha" readonly class="w-full p-2.5 text-xs rounded-xl bg-gray-950 border border-gray-800 text-blue-300 font-mono">
+                            <button id="btn8" onclick="toggleResultView('res8Alpha', 'btn8')" class="px-3 rounded-xl bg-gray-800 hover:bg-gray-700">👁️</button>
+                            <button onclick="copy('res8Alpha')" class="px-3 rounded-xl bg-gray-800 hover:bg-blue-600">📋</button>
+                        </div>
                     </div>
-                    <div class="flex space-x-1.5">
-                        <input type="text" id="res12Alpha" readonly placeholder="12-Char Alpha (英數)" class="w-full p-2.5 text-xs rounded-xl bg-gray-950 border border-gray-800 text-blue-400 font-mono">
-                        <button id="btn12A" onclick="toggleResultView('res12Alpha', 'btn12A')" class="px-3 rounded-xl bg-gray-800 hover:bg-gray-700">👁️</button>
-                        <button onclick="copy('res12Alpha')" class="px-3 rounded-xl bg-gray-800 hover:bg-blue-600">📋</button>
+                    <div>
+                        <label class="text-[9px] font-bold text-blue-400 uppercase px-1">12-Char Alpha (英數混合)</label>
+                        <div class="flex space-x-1.5">
+                            <input type="text" id="res12Alpha" readonly class="w-full p-2.5 text-xs rounded-xl bg-gray-950 border border-gray-800 text-blue-400 font-mono">
+                            <button id="btn12A" onclick="toggleResultView('res12Alpha', 'btn12A')" class="px-3 rounded-xl bg-gray-800 hover:bg-gray-700">👁️</button>
+                            <button onclick="copy('res12Alpha')" class="px-3 rounded-xl bg-gray-800 hover:bg-blue-600">📋</button>
+                        </div>
                     </div>
-                    <div class="flex space-x-1.5">
-                        <input type="text" id="res24Full" readonly placeholder="24-Char Full (最強)" class="w-full p-2.5 text-xs rounded-xl bg-gray-950 border border-gray-800 text-emerald-400 font-mono">
-                        <button id="btn24F" onclick="toggleResultView('res24Full', 'btn24F')" class="px-3 rounded-xl bg-gray-800 hover:bg-gray-700">👁️</button>
-                        <button onclick="copy('res24Full')" class="px-3 rounded-xl bg-gray-800 hover:bg-blue-600">📋</button>
+                    <div>
+                        <label class="text-[9px] font-bold text-emerald-500 uppercase px-1">24-Char Full (含符號/最強)</label>
+                        <div class="flex space-x-1.5">
+                            <input type="text" id="res24Full" readonly class="w-full p-2.5 text-xs rounded-xl bg-gray-950 border border-gray-800 text-emerald-400 font-mono">
+                            <button id="btn24F" onclick="toggleResultView('res24Full', 'btn24F')" class="px-3 rounded-xl bg-gray-800 hover:bg-gray-700">👁️</button>
+                            <button onclick="copy('res24Full')" class="px-3 rounded-xl bg-gray-800 hover:bg-blue-600">📋</button>
+                        </div>
                     </div>
-                    <div class="flex space-x-1.5">
-                        <input type="text" id="resNum" readonly placeholder="12-Digit PIN" class="w-full p-2.5 text-xs rounded-xl bg-gray-950 border border-gray-800 text-yellow-400 font-mono">
-                        <button id="btnNum" onclick="toggleResultView('resNum', 'btnNum')" class="px-3 rounded-xl bg-gray-800 hover:bg-gray-700">👁️</button>
-                        <button onclick="copy('resNum')" class="px-3 rounded-xl bg-gray-800 hover:bg-blue-600">📋</button>
+                    <div>
+                        <label class="text-[9px] font-bold text-yellow-600 uppercase px-1">12-Digit PIN (純數字)</label>
+                        <div class="flex space-x-1.5">
+                            <input type="text" id="resNum" readonly class="w-full p-2.5 text-xs rounded-xl bg-gray-950 border border-gray-800 text-yellow-400 font-mono">
+                            <button id="btnNum" onclick="toggleResultView('resNum', 'btnNum')" class="px-3 rounded-xl bg-gray-800 hover:bg-gray-700">👁️</button>
+                            <button onclick="copy('resNum')" class="px-3 rounded-xl bg-gray-800 hover:bg-blue-600">📋</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -99,7 +115,7 @@
             <div id="modeBTC" class="hidden space-y-2.5">
                 <div>
                     <label class="text-[9px] font-bold text-red-500 uppercase px-1">Private Key (WIF)</label>
-                    <div class="flex space-x-1.5 mt-0.5">
+                    <div class="flex space-x-1.5">
                         <input type="text" id="btcPriv" readonly class="w-full p-2.5 text-xs rounded-xl bg-gray-950 border border-gray-800 text-red-400 font-mono">
                         <button id="btnBP" onclick="toggleResultView('btcPriv', 'btnBP')" class="px-3 rounded-xl bg-gray-800 hover:bg-gray-700">👁️</button>
                         <button onclick="copy('btcPriv')" class="px-3 rounded-xl bg-gray-800 hover:bg-red-900">📋</button>
@@ -107,7 +123,7 @@
                 </div>
                 <div>
                     <label class="text-[9px] font-bold text-gray-400 uppercase px-1">Public Key (Hex)</label>
-                    <div class="flex space-x-1.5 mt-0.5">
+                    <div class="flex space-x-1.5">
                         <input type="text" id="btcPub" readonly class="w-full p-2.5 text-xs rounded-xl bg-gray-950 border border-gray-800 text-gray-400 font-mono text-[9px]">
                         <button id="btnBPub" onclick="toggleResultView('btcPub', 'btnBPub')" class="px-3 rounded-xl bg-gray-800 hover:bg-gray-700">👁️</button>
                         <button onclick="copy('btcPub')" class="px-3 rounded-xl bg-gray-800 hover:bg-blue-600">📋</button>
@@ -115,7 +131,7 @@
                 </div>
                 <div>
                     <label class="text-[9px] font-bold text-orange-400 uppercase px-1">BTC Address (Legacy)</label>
-                    <div class="flex space-x-1.5 mt-0.5">
+                    <div class="flex space-x-1.5">
                         <input type="text" id="btcAddr" readonly class="w-full p-2.5 text-xs rounded-xl bg-gray-950 border border-gray-800 text-orange-400 font-mono">
                         <button id="btnBA" onclick="toggleResultView('btcAddr', 'btnBA')" class="px-3 rounded-xl bg-gray-800 hover:bg-gray-700">👁️</button>
                         <button onclick="copy('btcAddr')" class="px-3 rounded-xl bg-gray-800 hover:bg-orange-600">📋</button>
@@ -134,6 +150,7 @@
             num: "0123456789"
         };
 
+        // --- 模式切換 ---
         function switchMode(mode) {
             currentMode = mode;
             document.getElementById('tabPass').className = (mode === 'pass' ? 'tab-active' : 'tab-inactive') + ' px-4 py-2 rounded-xl text-xs font-black uppercase transition-all';
@@ -143,27 +160,49 @@
             document.getElementById('mainTitle').innerText = mode === 'pass' ? 'BRAINWALLET' : 'BITCOIN WALLET';
         }
 
-        function autoShow(el) { el.classList.replace('password-mask', 'password-none'); }
-        function autoHide(el) { setTimeout(() => { el.classList.replace('password-none', 'password-mask'); }, 250); }
+        // --- 完美復活的智慧切換邏輯 ---
+        function autoShow(el) {
+            el.style.webkitTextSecurity = 'none'; // 解除黑點
+            const btn = el.nextElementSibling;
+            if(btn) {
+                btn.innerHTML = '🙈';
+                btn.classList.add('text-blue-400');
+            }
+        }
+
+        function autoHide(el) {
+            setTimeout(() => {
+                el.style.webkitTextSecurity = 'disc'; // 恢復黑點
+                const btn = el.nextElementSibling;
+                if(btn) {
+                    btn.innerHTML = '👁️';
+                    btn.classList.remove('text-blue-400');
+                }
+            }, 200); // 給按鈕點擊留一點緩衝時間
+        }
+
         function toggleView(id) {
             const el = document.getElementById(id);
-            el.classList.contains('password-mask') ? el.classList.replace('password-mask', 'password-none') : el.classList.replace('password-none', 'password-mask');
+            const btn = el.nextElementSibling;
+            if (el.style.webkitTextSecurity === 'none') {
+                el.style.webkitTextSecurity = 'disc';
+                btn.innerHTML = '👁️';
+                btn.classList.remove('text-blue-400');
+            } else {
+                el.style.webkitTextSecurity = 'none';
+                btn.innerHTML = '🙈';
+                btn.classList.add('text-blue-400');
+            }
         }
 
-        // BTC 輔助函數
-        function uint8ToWordArray(uint8Array) {
-            return CryptoJS.lib.WordArray.create(uint8Array);
-        }
-
+        // --- BTC 核心算法 ---
         function base58Check(payload) {
-            const wa = uint8ToWordArray(payload);
+            const wa = CryptoJS.lib.WordArray.create(payload);
             const hash1 = CryptoJS.SHA256(wa);
             const hash2 = CryptoJS.SHA256(hash1);
             const checksum = hash2.toString(CryptoJS.enc.Hex).substring(0, 8);
             const totalHex = Array.from(payload).map(b => b.toString(16).padStart(2, '0')).join('') + checksum;
             const finalBuffer = new Uint8Array(totalHex.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
-            
-            // Base58 Encode
             const ALPHABET = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
             let digits = [0];
             for (let i = 0; i < finalBuffer.length; i++) {
@@ -175,10 +214,7 @@
                     carry = (digits[j] / 58) | 0;
                     digits[j] %= 58;
                 }
-                while (carry) {
-                    digits.push(carry % 58);
-                    carry = (carry / 58) | 0;
-                }
+                while (carry) { digits.push(carry % 58); carry = (carry / 58) | 0; }
             }
             let res = '';
             for (let i = 0; finalBuffer[i] === 0 && i < finalBuffer.length - 1; i++) res += ALPHABET[0];
@@ -186,6 +222,7 @@
             return res;
         }
 
+        // --- 執行生成 ---
         async function executeAction() {
             try {
                 const svc = document.getElementById('service').value.toLowerCase().trim();
@@ -219,18 +256,12 @@
                     const seed = await crypto.subtle.digest('SHA-256', encoder.encode(base + "@btc-wallet"));
                     const privBytes = new Uint8Array(seed);
                     const privHex = Array.from(privBytes).map(b => b.toString(16).padStart(2, '0')).join('');
-                    
-                    // WIF (Compressed)
                     const wifData = new Uint8Array([0x80, ...privBytes, 0x01]);
                     realPasswords.btcPriv = base58Check(wifData);
-
-                    // PubKey (Compressed)
                     const ec = new elliptic.ec('secp256k1');
                     const keyPair = ec.keyFromPrivate(privHex);
                     const pubHex = keyPair.getPublic(true, 'hex');
                     realPasswords.btcPub = pubHex;
-
-                    // Address
                     const sha256Pub = CryptoJS.SHA256(CryptoJS.enc.Hex.parse(pubHex));
                     const ripemd160 = CryptoJS.RIPEMD160(sha256Pub);
                     const addrData = new Uint8Array([0x00, ...new Uint8Array(ripemd160.toString().match(/.{1,2}/g).map(b => parseInt(b, 16)))]);
@@ -241,12 +272,10 @@
                         document.getElementById(id).value = realPasswords[id].substring(0,mask[0]) + "****" + realPasswords[id].slice(-mask[1]);
                     });
                 }
-            } catch (e) {
-                console.error(e);
-                alert("運算發生錯誤，請確認網路連線（需載入加密庫）。");
-            }
+            } catch (e) { alert("運算失敗，請確認網路環境以載入加密組件。"); }
         }
 
+        // --- 結果遮蔽切換 ---
         function toggleResultView(id, btnId) {
             const el = document.getElementById(id);
             if (el.value.includes('****')) {
@@ -259,6 +288,7 @@
             }
         }
 
+        // --- 複製功能 ---
         function copy(id) {
             navigator.clipboard.writeText(realPasswords[id]);
             const btn = event.currentTarget;
