@@ -12,8 +12,8 @@
         .password-mask { -webkit-text-security: disc; }
         .password-none { -webkit-text-security: none; }
         .strength-bar { transition: width 0.5s ease-in-out, background-color 0.5s; }
-        .tab-active { @apply bg-blue-600 text-white shadow-lg shadow-blue-900/40; }
-        .tab-inactive { @apply bg-gray-800 text-gray-400 hover:bg-gray-700; }
+        .tab-active { background-color: #2563eb; color: white; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3); }
+        .tab-inactive { background-color: #1f2937; color: #9ca3af; }
     </style>
     <script>
         if ('serviceWorker' in navigator) {
@@ -34,24 +34,24 @@
         <div class="space-y-4">
             <div class="space-y-4 bg-gray-800/40 p-4 rounded-2xl border border-gray-800">
                 <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-widest mb-1 text-blue-400">Target / 服務名稱 (種子 A)</label>
+                    <label class="block text-[10px] font-bold uppercase tracking-widest mb-1 text-blue-400">Target / 服務名稱</label>
                     <input type="text" id="service" placeholder="例如: Binance, Google" autocomplete="off"
-                        class="w-full p-2.5 rounded-xl bg-gray-950 border border-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 text-white transition-all text-sm">
+                        class="w-full p-2.5 rounded-xl bg-gray-950 border border-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 text-white text-sm">
                 </div>
 
                 <div class="relative">
-                    <label class="block text-[10px] font-bold uppercase tracking-widest mb-1 text-blue-400">Master Key / 腦秘密 (種子 B)</label>
+                    <label class="block text-[10px] font-bold uppercase tracking-widest mb-1 text-blue-400">Master Key / 腦秘密 (支援注音)</label>
                     <input type="text" id="masterKey" name="my-brain-key" placeholder="支援中文/注音輸入" 
                         autocomplete="off" spellcheck="false" onfocus="autoShow(this)" onblur="autoHide(this)"
-                        class="password-mask w-full p-2.5 rounded-xl bg-gray-950 border border-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 text-white transition-all text-sm">
+                        class="password-mask w-full p-2.5 rounded-xl bg-gray-950 border border-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 text-white text-sm">
                     <button onclick="toggleView('masterKey')" class="absolute right-3 top-9 text-gray-600 hover:text-blue-400 p-1">👁️</button>
                 </div>
 
                 <div class="relative">
-                    <label class="block text-[10px] font-bold uppercase tracking-widest mb-1 text-yellow-500">Salt / 自定義鹽值 (種子 C)</label>
-                    <input type="text" id="userSalt" name="my-salt-val" placeholder="例如: ㄆㄨˇㄙㄚˋ10-編號" 
+                    <label class="block text-[10px] font-bold uppercase tracking-widest mb-1 text-yellow-500">Salt / 自定義鹽值</label>
+                    <input type="text" id="userSalt" name="my-salt-val" placeholder="例如: PSA10-編號" 
                         autocomplete="off" spellcheck="false" onfocus="autoShow(this)" onblur="autoHide(this)"
-                        class="password-mask w-full p-2.5 rounded-xl bg-gray-950 border border-yellow-900/20 focus:outline-none focus:ring-2 focus:ring-yellow-600 text-white transition-all text-sm">
+                        class="password-mask w-full p-2.5 rounded-xl bg-gray-950 border border-yellow-900/20 focus:outline-none focus:ring-2 focus:ring-yellow-600 text-white text-sm">
                     <button onclick="toggleView('userSalt')" class="absolute right-3 top-9 text-gray-600 hover:text-yellow-500 p-1">👁️</button>
                 </div>
             </div>
@@ -61,45 +61,35 @@
                 Generate Secure Data 🚀
             </button>
 
-            <div id="strengthContainer" class="hidden space-y-1.5 px-1">
-                <div class="flex justify-between items-end">
-                    <span class="text-[9px] font-bold text-gray-500 uppercase tracking-tighter">Entropy Strength / 熵值分析</span>
-                    <span id="strengthText" class="text-[10px] font-black text-blue-400 italic">--</span>
+            <div id="modePass" class="space-y-3">
+                <div id="strengthContainer" class="hidden space-y-1.5 px-1">
+                    <div class="flex justify-between items-end">
+                        <span class="text-[9px] font-bold text-gray-500 uppercase tracking-tighter">Security Strength</span>
+                        <span id="strengthText" class="text-[10px] font-black text-blue-400 italic">--</span>
+                    </div>
+                    <div class="w-full bg-gray-800 rounded-full h-1 overflow-hidden">
+                        <div id="strengthBar" class="strength-bar h-full w-0 bg-blue-500"></div>
+                    </div>
                 </div>
-                <div class="w-full bg-gray-800 rounded-full h-1 overflow-hidden">
-                    <div id="strengthBar" class="strength-bar h-full w-0 bg-blue-500"></div>
-                </div>
-            </div>
 
-            <div id="modePass" class="space-y-2.5">
-                <div class="result-group">
-                    <label class="text-[9px] font-bold text-gray-500 uppercase px-1">8-Char Alpha</label>
-                    <div class="flex space-x-1.5 mt-0.5">
-                        <input type="text" id="res8Alpha" readonly class="w-full p-2.5 text-xs rounded-xl bg-gray-950 border border-gray-800 text-blue-300 font-mono">
+                <div class="result-group space-y-2">
+                    <div class="flex space-x-1.5">
+                        <input type="text" id="res8Alpha" readonly placeholder="8-Char Alpha" class="w-full p-2.5 text-xs rounded-xl bg-gray-950 border border-gray-800 text-blue-300 font-mono">
                         <button id="btn8" onclick="toggleResultView('res8Alpha', 'btn8')" class="px-3 rounded-xl bg-gray-800 hover:bg-gray-700">👁️</button>
                         <button onclick="copy('res8Alpha')" class="px-3 rounded-xl bg-gray-800 hover:bg-blue-600">📋</button>
                     </div>
-                </div>
-                <div class="result-group">
-                    <label class="text-[9px] font-bold text-blue-400 uppercase px-1">12-Char Alpha (英數混合)</label>
-                    <div class="flex space-x-1.5 mt-0.5">
-                        <input type="text" id="res12Alpha" readonly class="w-full p-2.5 text-xs rounded-xl bg-gray-950 border border-gray-800 text-blue-400 font-mono">
+                    <div class="flex space-x-1.5">
+                        <input type="text" id="res12Alpha" readonly placeholder="12-Char Alpha (英數)" class="w-full p-2.5 text-xs rounded-xl bg-gray-950 border border-gray-800 text-blue-400 font-mono">
                         <button id="btn12A" onclick="toggleResultView('res12Alpha', 'btn12A')" class="px-3 rounded-xl bg-gray-800 hover:bg-gray-700">👁️</button>
                         <button onclick="copy('res12Alpha')" class="px-3 rounded-xl bg-gray-800 hover:bg-blue-600">📋</button>
                     </div>
-                </div>
-                <div class="result-group">
-                    <label class="text-[9px] font-bold text-emerald-500 uppercase px-1">24-Char Full (最強加密)</label>
-                    <div class="flex space-x-1.5 mt-0.5">
-                        <input type="text" id="res24Full" readonly class="w-full p-2.5 text-xs rounded-xl bg-gray-950 border border-gray-800 text-emerald-400 font-mono">
+                    <div class="flex space-x-1.5">
+                        <input type="text" id="res24Full" readonly placeholder="24-Char Full (最強)" class="w-full p-2.5 text-xs rounded-xl bg-gray-950 border border-gray-800 text-emerald-400 font-mono">
                         <button id="btn24F" onclick="toggleResultView('res24Full', 'btn24F')" class="px-3 rounded-xl bg-gray-800 hover:bg-gray-700">👁️</button>
                         <button onclick="copy('res24Full')" class="px-3 rounded-xl bg-gray-800 hover:bg-blue-600">📋</button>
                     </div>
-                </div>
-                <div class="result-group">
-                    <label class="text-[9px] font-bold text-yellow-600 uppercase px-1">12-Digit Numeric (純數字 PIN)</label>
-                    <div class="flex space-x-1.5 mt-0.5">
-                        <input type="text" id="resNum" readonly class="w-full p-2.5 text-xs rounded-xl bg-gray-950 border border-gray-800 text-yellow-400 font-mono">
+                    <div class="flex space-x-1.5">
+                        <input type="text" id="resNum" readonly placeholder="12-Digit PIN" class="w-full p-2.5 text-xs rounded-xl bg-gray-950 border border-gray-800 text-yellow-400 font-mono">
                         <button id="btnNum" onclick="toggleResultView('resNum', 'btnNum')" class="px-3 rounded-xl bg-gray-800 hover:bg-gray-700">👁️</button>
                         <button onclick="copy('resNum')" class="px-3 rounded-xl bg-gray-800 hover:bg-blue-600">📋</button>
                     </div>
@@ -107,24 +97,24 @@
             </div>
 
             <div id="modeBTC" class="hidden space-y-2.5">
-                <div class="result-group">
-                    <label class="text-[9px] font-bold text-red-500 uppercase px-1">BTC Private Key (WIF / 絕對秘密)</label>
+                <div>
+                    <label class="text-[9px] font-bold text-red-500 uppercase px-1">Private Key (WIF)</label>
                     <div class="flex space-x-1.5 mt-0.5">
                         <input type="text" id="btcPriv" readonly class="w-full p-2.5 text-xs rounded-xl bg-gray-950 border border-gray-800 text-red-400 font-mono">
                         <button id="btnBP" onclick="toggleResultView('btcPriv', 'btnBP')" class="px-3 rounded-xl bg-gray-800 hover:bg-gray-700">👁️</button>
                         <button onclick="copy('btcPriv')" class="px-3 rounded-xl bg-gray-800 hover:bg-red-900">📋</button>
                     </div>
                 </div>
-                <div class="result-group">
-                    <label class="text-[9px] font-bold text-gray-400 uppercase px-1">BTC Public Key (Hex)</label>
+                <div>
+                    <label class="text-[9px] font-bold text-gray-400 uppercase px-1">Public Key (Hex)</label>
                     <div class="flex space-x-1.5 mt-0.5">
-                        <input type="text" id="btcPub" readonly class="w-full p-2.5 text-xs rounded-xl bg-gray-950 border border-gray-800 text-gray-400 font-mono text-[10px]">
+                        <input type="text" id="btcPub" readonly class="w-full p-2.5 text-xs rounded-xl bg-gray-950 border border-gray-800 text-gray-400 font-mono text-[9px]">
                         <button id="btnBPub" onclick="toggleResultView('btcPub', 'btnBPub')" class="px-3 rounded-xl bg-gray-800 hover:bg-gray-700">👁️</button>
                         <button onclick="copy('btcPub')" class="px-3 rounded-xl bg-gray-800 hover:bg-blue-600">📋</button>
                     </div>
                 </div>
-                <div class="result-group">
-                    <label class="text-[9px] font-bold text-orange-400 uppercase px-1">BTC Address (Legacy / 1-Prefix)</label>
+                <div>
+                    <label class="text-[9px] font-bold text-orange-400 uppercase px-1">BTC Address (Legacy)</label>
                     <div class="flex space-x-1.5 mt-0.5">
                         <input type="text" id="btcAddr" readonly class="w-full p-2.5 text-xs rounded-xl bg-gray-950 border border-gray-800 text-orange-400 font-mono">
                         <button id="btnBA" onclick="toggleResultView('btcAddr', 'btnBA')" class="px-3 rounded-xl bg-gray-800 hover:bg-gray-700">👁️</button>
@@ -132,37 +122,27 @@
                     </div>
                 </div>
             </div>
-
-            <p class="text-[8px] text-gray-600 text-center font-mono pt-1 uppercase">
-                AES-Standard | ECDSA Secp256k1 | Local Encryption Only
-            </p>
         </div>
     </div>
 
     <script>
         let currentMode = 'pass';
         let realPasswords = {};
-        const EC = new elliptic.ec('secp256k1');
         const charsets = {
             alpha: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
             full: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:,.<>?",
             num: "0123456789"
         };
 
-        // 切換模式
         function switchMode(mode) {
             currentMode = mode;
-            const isPass = mode === 'pass';
-            document.getElementById('tabPass').className = isPass ? 'tab-active px-4 py-2 rounded-xl text-xs font-black uppercase transition-all' : 'tab-inactive px-4 py-2 rounded-xl text-xs font-black uppercase transition-all';
-            document.getElementById('tabBTC').className = !isPass ? 'tab-active px-4 py-2 rounded-xl text-xs font-black uppercase transition-all' : 'tab-inactive px-4 py-2 rounded-xl text-xs font-black uppercase transition-all';
-            document.getElementById('modePass').className = isPass ? 'space-y-2.5' : 'hidden';
-            document.getElementById('modeBTC').className = !isPass ? 'space-y-2.5' : 'hidden';
-            document.getElementById('mainTitle').innerText = isPass ? 'BRAINWALLET' : 'BITCOIN WALLET';
-            if(isPass) document.getElementById('strengthContainer').classList.remove('hidden');
-            else document.getElementById('strengthContainer').classList.add('hidden');
+            document.getElementById('tabPass').className = (mode === 'pass' ? 'tab-active' : 'tab-inactive') + ' px-4 py-2 rounded-xl text-xs font-black uppercase transition-all';
+            document.getElementById('tabBTC').className = (mode === 'btc' ? 'tab-active' : 'tab-inactive') + ' px-4 py-2 rounded-xl text-xs font-black uppercase transition-all';
+            document.getElementById('modePass').classList.toggle('hidden', mode !== 'pass');
+            document.getElementById('modeBTC').classList.toggle('hidden', mode !== 'btc');
+            document.getElementById('mainTitle').innerText = mode === 'pass' ? 'BRAINWALLET' : 'BITCOIN WALLET';
         }
 
-        // 智慧隱藏輸入
         function autoShow(el) { el.classList.replace('password-mask', 'password-none'); }
         function autoHide(el) { setTimeout(() => { el.classList.replace('password-none', 'password-mask'); }, 250); }
         function toggleView(id) {
@@ -170,26 +150,25 @@
             el.classList.contains('password-mask') ? el.classList.replace('password-mask', 'password-none') : el.classList.replace('password-none', 'password-mask');
         }
 
-        // 密碼映射邏輯
-        async function getComplexPassword(base, salt, charset, length) {
-            const encoder = new TextEncoder();
-            const data = encoder.encode(base + salt);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-            const hashArray = new Uint8Array(hashBuffer);
-            let result = "";
-            for (let i = 0; i < length; i++) {
-                result += charset.charAt(hashArray[i % 32] % charset.length);
-            }
-            return result;
+        // BTC 輔助函數
+        function uint8ToWordArray(uint8Array) {
+            return CryptoJS.lib.WordArray.create(uint8Array);
         }
 
-        // 比特幣 Base58 編碼
-        const ALPHABET = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
-        function base58Encode(buffer) {
+        function base58Check(payload) {
+            const wa = uint8ToWordArray(payload);
+            const hash1 = CryptoJS.SHA256(wa);
+            const hash2 = CryptoJS.SHA256(hash1);
+            const checksum = hash2.toString(CryptoJS.enc.Hex).substring(0, 8);
+            const totalHex = Array.from(payload).map(b => b.toString(16).padStart(2, '0')).join('') + checksum;
+            const finalBuffer = new Uint8Array(totalHex.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
+            
+            // Base58 Encode
+            const ALPHABET = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
             let digits = [0];
-            for (let i = 0; i < buffer.length; i++) {
+            for (let i = 0; i < finalBuffer.length; i++) {
                 for (let j = 0; j < digits.length; j++) digits[j] <<= 8;
-                digits[0] += buffer[i];
+                digits[0] += finalBuffer[i];
                 let carry = 0;
                 for (let j = 0; j < digits.length; j++) {
                     digits[j] += carry;
@@ -202,73 +181,70 @@
                 }
             }
             let res = '';
-            for (let i = 0; buffer[i] === 0 && i < buffer.length - 1; i++) res += ALPHABET[0];
+            for (let i = 0; finalBuffer[i] === 0 && i < finalBuffer.length - 1; i++) res += ALPHABET[0];
             for (let i = digits.length - 1; i >= 0; i--) res += ALPHABET[digits[i]];
             return res;
         }
 
-        function base58Check(payload) {
-            const hash1 = CryptoJS.SHA256(CryptoJS.lib.WordArray.create(payload));
-            const hash2 = CryptoJS.SHA256(hash1);
-            const checksum = hash2.toString(CryptoJS.enc.Hex).substring(0, 8);
-            const totalHex = Array.from(payload).map(b => b.toString(16).padStart(2, '0')).join('') + checksum;
-            const finalBuffer = new Uint8Array(totalHex.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
-            return base58Encode(finalBuffer);
-        }
-
-        // 核心執行
         async function executeAction() {
-            const svc = document.getElementById('service').value.toLowerCase().trim();
-            const key = document.getElementById('masterKey').value;
-            const salt = document.getElementById('userSalt').value;
-            if (!svc || !key) return alert("請填寫所有欄位！");
-            const base = svc + key + salt;
-
-            if (currentMode === 'pass') {
-                realPasswords.res8Alpha = await getComplexPassword(base, "@a8", charsets.alpha, 8);
-                realPasswords.res12Alpha = await getComplexPassword(base, "@a12", charsets.alpha, 12);
-                realPasswords.res24Full = await getComplexPassword(base, "@f24", charsets.full, 24);
-                realPasswords.resNum = await getComplexPassword(base, "@n12", charsets.num, 12);
-
-                updateResultDisplay('res8Alpha', 2, 2);
-                updateResultDisplay('res12Alpha', 3, 3);
-                updateResultDisplay('res24Full', 4, 4);
-                updateResultDisplay('resNum', 3, 3);
-
-                document.getElementById('strengthContainer').classList.remove('hidden');
-                document.getElementById('strengthBar').style.width = '100%';
-                document.getElementById('strengthText').innerText = `GODLIKE (157 bits) 🛡️`;
-            } else {
-                // 比特幣邏輯
+            try {
+                const svc = document.getElementById('service').value.toLowerCase().trim();
+                const key = document.getElementById('masterKey').value;
+                const salt = document.getElementById('userSalt').value;
+                if (!svc || !key) return alert("請填寫欄位！");
+                const base = svc + key + salt;
                 const encoder = new TextEncoder();
-                const seedHash = await crypto.subtle.digest('SHA-256', encoder.encode(base + "@btc-wallet"));
-                const privKeyArray = new Uint8Array(seedHash);
-                const privKeyHex = Array.from(privKeyArray).map(b => b.toString(16).padStart(2, '0')).join('');
-                
-                // 1. 生成 WIF 私鑰
-                const wifPayload = new Uint8Array([0x80, ...privKeyArray]); // 0x80 for Mainnet
-                realPasswords.btcPriv = base58Check(wifPayload);
 
-                // 2. 生成公鑰
-                const keyPair = EC.keyFromPrivate(privKeyHex);
-                const pubKey = keyPair.getPublic(true, 'hex'); // Compressed
-                realPasswords.btcPub = pubKey;
+                if (currentMode === 'pass') {
+                    const getPwd = async (s, c, l) => {
+                        const h = await crypto.subtle.digest('SHA-256', encoder.encode(base + s));
+                        const arr = new Uint8Array(h);
+                        let r = ""; for(let i=0; i<l; i++) r += c.charAt(arr[i % 32] % c.length);
+                        return r;
+                    };
+                    realPasswords.res8Alpha = await getPwd("@a8", charsets.alpha, 8);
+                    realPasswords.res12Alpha = await getPwd("@a12", charsets.alpha, 12);
+                    realPasswords.res24Full = await getPwd("@f24", charsets.full, 24);
+                    const nH = await crypto.subtle.digest('SHA-256', encoder.encode(base + "@n12"));
+                    realPasswords.resNum = BigInt('0x' + Array.from(new Uint8Array(nH)).map(b => b.toString(16).padStart(2, '0')).join('').substring(0,16)).toString().substring(0,12);
 
-                // 3. 生成地址 (P2PKH)
-                const shaPub = CryptoJS.SHA256(CryptoJS.enc.Hex.parse(pubKey));
-                const hash160 = CryptoJS.RIPEMD160(shaPub);
-                const addrPayload = new Uint8Array([0x00, ...new Uint8Array(hash160.toString(CryptoJS.enc.Hex).match(/.{1,2}/g).map(b => parseInt(b, 16)))]);
-                realPasswords.btcAddr = base58Check(addrPayload);
+                    ['res8Alpha', 'res12Alpha', 'res24Full', 'resNum'].forEach(id => {
+                        const mask = id.includes('24') ? [4,4] : [3,3];
+                        document.getElementById(id).value = realPasswords[id].substring(0,mask[0]) + "****" + realPasswords[id].slice(-mask[1]);
+                    });
+                    document.getElementById('strengthContainer').classList.remove('hidden');
+                    document.getElementById('strengthBar').style.width = '100%';
+                    document.getElementById('strengthText').innerText = 'GODLIKE 🛡️';
+                } else {
+                    const seed = await crypto.subtle.digest('SHA-256', encoder.encode(base + "@btc-wallet"));
+                    const privBytes = new Uint8Array(seed);
+                    const privHex = Array.from(privBytes).map(b => b.toString(16).padStart(2, '0')).join('');
+                    
+                    // WIF (Compressed)
+                    const wifData = new Uint8Array([0x80, ...privBytes, 0x01]);
+                    realPasswords.btcPriv = base58Check(wifData);
 
-                updateResultDisplay('btcPriv', 4, 4);
-                updateResultDisplay('btcPub', 6, 6);
-                updateResultDisplay('btcAddr', 4, 4);
+                    // PubKey (Compressed)
+                    const ec = new elliptic.ec('secp256k1');
+                    const keyPair = ec.keyFromPrivate(privHex);
+                    const pubHex = keyPair.getPublic(true, 'hex');
+                    realPasswords.btcPub = pubHex;
+
+                    // Address
+                    const sha256Pub = CryptoJS.SHA256(CryptoJS.enc.Hex.parse(pubHex));
+                    const ripemd160 = CryptoJS.RIPEMD160(sha256Pub);
+                    const addrData = new Uint8Array([0x00, ...new Uint8Array(ripemd160.toString().match(/.{1,2}/g).map(b => parseInt(b, 16)))]);
+                    realPasswords.btcAddr = base58Check(addrData);
+
+                    ['btcPriv', 'btcPub', 'btcAddr'].forEach(id => {
+                        const mask = id === 'btcPub' ? [6,6] : [4,4];
+                        document.getElementById(id).value = realPasswords[id].substring(0,mask[0]) + "****" + realPasswords[id].slice(-mask[1]);
+                    });
+                }
+            } catch (e) {
+                console.error(e);
+                alert("運算發生錯誤，請確認網路連線（需載入加密庫）。");
             }
-        }
-
-        function updateResultDisplay(id, s, e) {
-            const val = realPasswords[id];
-            document.getElementById(id).value = val.substring(0, s) + "****" + val.slice(-e);
         }
 
         function toggleResultView(id, btnId) {
@@ -277,7 +253,7 @@
                 el.value = realPasswords[id];
                 document.getElementById(btnId).innerText = "🙈";
             } else {
-                const mask = id.includes('24') || id.includes('Pub') ? [4,4] : [3,3];
+                const mask = id.includes('24') || id === 'btcPub' ? [4,4] : [3,3];
                 el.value = realPasswords[id].substring(0, mask[0]) + "****" + realPasswords[id].slice(-mask[1]);
                 document.getElementById(btnId).innerText = "👁️";
             }
