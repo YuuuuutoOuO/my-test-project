@@ -1,5 +1,5 @@
 // 每次修改了 js/ 或 lib/ 裡面的檔案，記得把這個版本號加一 (例如改成 v13)
-const CACHE_NAME = 'brainwallet-v12'; 
+const CACHE_NAME = 'brainwallet-v13'; 
 
 const ASSETS = [
   './',
