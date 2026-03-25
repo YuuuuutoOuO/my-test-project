@@ -205,3 +205,11 @@ function copy(id) {
     const btn = event.currentTarget;
     btn.innerText = "✅"; setTimeout(() => btn.innerText = "📋", 1000);
 }
+
+function clearStock() {
+    document.getElementById('stockA').value = '';
+    document.getElementById('stockB').value = '';
+    document.getElementById('stockC').value = '';
+    document.getElementById('stockD').value = '';
+    document.getElementById('stockResult').value = '0.00';
+}
