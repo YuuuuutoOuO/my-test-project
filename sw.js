@@ -1,12 +1,15 @@
-const CACHE_NAME = 'brainwallet-v11'; // 升級版本號強制更新
+// 每次修改了 js/ 或 lib/ 裡面的檔案，記得把這個版本號加一 (例如改成 v13)
+const CACHE_NAME = 'brainwallet-v12'; 
+
 const ASSETS = [
   './',
   './index.html',
   './manifest.json',
-  './crypto-js.min.js',
-  './ripemd160.min.js',
-  './elliptic.min.js',
-  'https://cdn.tailwindcss.com' // UI 樣式庫
+  './js/app.js',                 // 新的自訂邏輯路徑
+  './lib/crypto-js.min.js',      // 新的外部庫路徑
+  './lib/ripemd160.min.js',      // 新的外部庫路徑
+  './lib/elliptic.min.js',       // 新的外部庫路徑
+  'https://cdn.tailwindcss.com'
 ];
 
 self.addEventListener('install', (e) => {
